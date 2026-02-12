@@ -94,6 +94,14 @@ if(HAS_CAST_FUNCTION_TYPE)
   target_compile_options(onnxruntime_pybind11_state PRIVATE "-Wno-cast-function-type")
 endif()
 
+# Pybind11 3.0+ may trigger false positive uninitialized variable warnings in some compilers.
+# Suppress these warnings to allow building with pybind11 3.0.
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-Wno-maybe-uninitialized" HAS_MAYBE_UNINITIALIZED)
+if(HAS_MAYBE_UNINITIALIZED)
+  target_compile_options(onnxruntime_pybind11_state PRIVATE "-Wno-maybe-uninitialized")
+endif()
+
 # We export symbols using linker and the compiler does not know anything about it
 # There is a problem with classes that have pybind types as members.
 # See https://pybind11.readthedocs.io/en/stable/faq.html#someclass-declared-with-greater-visibility-than-the-type-of-its-field-someclass-member-wattributes
